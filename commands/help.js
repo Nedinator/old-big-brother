@@ -13,7 +13,7 @@ module.exports = class help {
         let embed = new Discord.MessageEmbed()
             .setTitle(this.name)
             .addField("Config", "!config <adminchannel/notifchannel> <id>")
-            .addField("History", "!history <user id>")
+            .addField("History (soon)", "!history <user id>")
             .setColor("BLURPLE")
             .setFooter("Big Brother", bot.user.displayAvatarURL);
 

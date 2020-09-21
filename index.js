@@ -49,7 +49,6 @@ bot.on("message", (message) => {
     } catch (e) {
         console.log(e)
     }
-
 });
 
 //bot join server event
@@ -72,49 +71,50 @@ bot.on("guildCreate", (guild) => {
 
 //user join event
 bot.on("guildMemberAdd", (member) => {
-
-    let embed = new Discord.MessageEmbed()
-        .setTitle(`${member.name} (${member.id})`)
-        .setTimestamp(Date.now())
-        .setFooter("Big Brother", bot.user.displayAvatarURL)
-    User.findOne({
-        userID: member.id
-    }, (err, doc) => {
+    Server.findOne({
+        serverID: member.guild.id
+    }, (err, serverDoc) => {
         if (err) console.log(err);
-        if (!doc) {
-            let channelid = adminTools.gimmeNotifChannel(member.guild);
-            console.log("Channelid: " + channelid);
-            let notification = guild.channels.cache.get(channelid);
-            embed.setColor("GREEN")
-            embed.setDescription("No bans found.")
-            console.log(notification);
-
-            return notification.send(embed);
+        if (!serverDoc) {
+            return console.log("Server not found.");
         } else {
-            Server.findOne({
-                serverID: member.guild.id
-            }, (err, doc2) => {
-                if (err) console.log(err);
-                if (!doc2) {
-                    return console.log("Member joined a server that isn't in the db.");
+            //start the embed
+            let embed = new Discord.MessageEmbed()
+                .setTitle("Big Brother Alert: New User")
+                .setDescription(`${member.user.username} - ${member.id}`)
+                .setTimestamp(Date.now())
+                .setThumbnail(member.user.displayAvatarURL());
+            User.findOne({
+                userID: member.id
+            }, (err2, userDoc) => {
+                if (err2) console.log(err2);
+                //since we're in the server query block, we can get data from that too
+                let notifChannel = bot.channels.cache.get(serverDoc.notifChannel);
+                if (!userDoc) {
+                    embed.setColor("GREEN")
+                    embed.addField("All good.", "User has 0 recorded bans.");
+                    return notifChannel.send(embed);
                 } else {
                     embed.setColor("RED");
-                    if (doc.bans.length < 5) {
-                        for (i = 0; i < doc.bans.length; i++) {
-                            embed.addField(`Date: ${doc.bans[i].date}`, `Reason: ${doc.bans[i].reason}`)
+                    if (userDoc.bans.length < 5) {
+                        for (i = 0; i < userDoc.bans.length; i++) {
+                            embed.addField(`Date: ${userDoc.bans[i].date}`, `Reason: ${userDoc.bans[i].reason}`)
                         }
                     } else {
                         for (i = 0; i < 5; i++) {
-                            embed.addField(`Date: ${doc.bans[i].date}`, `Reason: ${doc.bans[i].reason}`)
+                            embed.addField(`Date: ${userDoc.bans[i].date}`, `Reason: ${userDoc.bans[i].reason}`)
                         }
-                        embed.addField("User has more than 5 bans...", `This user has ${doc.bans.length} bans known by this bot.`)
+                        embed.addField("User has more than 5 bans...", `This user has ${userDoc.bans.length} bans known by this bot.`)
                     }
-                    return notification.send(embed);
+                    return notifChannel.send(embed);
                 }
-            });
+            })
         }
-    });
 
+
+
+
+    });
 });
 
 //user leave event

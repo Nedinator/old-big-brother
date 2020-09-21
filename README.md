@@ -2,17 +2,21 @@
 > be notified if someone sketchy joins your server.
 
 ## Status
-> ...completely broken rn. It logs bans, but notifying is going to take a bit more work. prolly stupid issue
+> Bans are 100% functional. Going to start implementing kicks.
 
 ## Goal Checklist
 * [x] Config system
   * [x] Select admin channel
   * [x] Select notification channel
 * [x] Monitoring system
-  * [x] Monitor and log bans. (Kicks/mutes/warns down the road? Handled by this bot or made compatiable with others?)
+  * [x] Monitor and log bans. 
+    * [ ] The dates need fixed, just havent taken time to look at this
   * [x] On join, check will be done for any bans. 
-> i have a lot more ideas for this bot, this is just what i was ready to code over a day off or so. feel free to 
-add here, 
+  * [ ] Monitoring kicks
+    * [ ] Check audit log on member leave, if kicked log
+    * [ ] On join, check for kicks from all servers.
+* [ ] Bot assets - profile picture, website, etc
+  
 
 ## Discord
 > <a href="https://discord.gg/nB5sKEz">Click here</a> to chat about this bot
