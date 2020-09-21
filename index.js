@@ -83,6 +83,7 @@ bot.on("guildMemberAdd", (member) => {
                 .setTitle("Big Brother Alert: New User")
                 .setDescription(`${member.user.username} - ${member.id}`)
                 .setTimestamp(Date.now())
+                .setFooter("Note: This bot can only detect bans in the servers its in.", bot.user.displayAvatarURL)
                 .setThumbnail(member.user.displayAvatarURL());
             User.findOne({
                 userID: member.id
@@ -110,10 +111,6 @@ bot.on("guildMemberAdd", (member) => {
                 }
             })
         }
-
-
-
-
     });
 });
 
@@ -124,6 +121,15 @@ bot.on("guildMemberRemove", (member) => {
 
 //user ban event
 bot.on("guildBanAdd", async (guild, user) => {
+    //Getting the date (yeah i copied and pasted this idc :) )
+    const monthNames = ["January", "February", "March", "April", "May", "June",
+        "July", "August", "September", "October", "November", "December"];
+    let dateObj = new Date();
+    let month = monthNames[dateObj.getMonth()];
+    let day = String(dateObj.getDate()).padStart(2, '0');
+    let year = dateObj.getFullYear();
+    let output = month + '\n' + day + ', ' + year;
+
     const fetchedAudit = await guild.fetchAuditLogs({
         limit: 1,
         type: 'MEMBER_BAN_ADD'
@@ -139,16 +145,17 @@ bot.on("guildBanAdd", async (guild, user) => {
                 userID: user.id,
                 bans: [{
                     serverID: guild.id,
-                    date: Date.now(),
+                    date: output,
                     reason: banLog.reason
                 }]
             })
             newUser.save().catch(err => console.log(err));
         } else {
             //update bans
+
             let newBan = [{
                 serverID: guild.id,
-                date: Date.now(),
+                date: output,
                 reason: banLog.reason
             }]
             console.log(doc.bans)

@@ -4,7 +4,7 @@
 ## Status
 > Bans are 100% functional. Going to start implementing kicks.
 
-## Goal Checklist
+## TODO
 * [x] Config system
   * [x] Select admin channel
   * [x] Select notification channel
@@ -12,9 +12,12 @@
   * [x] Monitor and log bans. 
     * [ ] The dates need fixed, just havent taken time to look at this
   * [x] On join, check will be done for any bans. 
+    * [x] Sends notification embed to desired channel.
+    * [ ] Page embeds coming soon™
   * [ ] Monitoring kicks
     * [ ] Check audit log on member leave, if kicked log
     * [ ] On join, check for kicks from all servers.
+  * [ ] History command
 * [ ] Bot assets - profile picture, website, etc
   
 
