@@ -25,10 +25,14 @@ const User = require("./models/user.js");
 
 //extra utils
 const adminTools = require("./utils/admin.js");
+const user = require("./models/user.js");
 
 //turn on da bot
 bot.on("ready", () => {
     console.log(bot.user.username + " is online and ready.");
+    bot.user.setActivity(`${bot.guilds.cache.array.length + 1} servers.`, {
+        type: "WATCHING"
+    });
     bot.generateInvite(['ADMINISTRATOR'])
         .then(link => console.log(`Generated link for invite ${link}.`))
         .catch(console.error);
@@ -50,6 +54,16 @@ bot.on("message", (message) => {
         console.log(e)
     }
 });
+
+//Getting the date (yeah i copied and pasted this idc :) )
+const monthNames = ["January", "February", "March", "April", "May", "June",
+    "July", "August", "September", "October", "November", "December"
+];
+let dateObj = new Date();
+let month = monthNames[dateObj.getMonth()];
+let day = String(dateObj.getDate()).padStart(2, '0');
+let year = dateObj.getFullYear();
+let output = month + '\n' + day + ', ' + year;
 
 //bot join server event
 bot.on("guildCreate", (guild) => {
@@ -96,16 +110,19 @@ bot.on("guildMemberAdd", (member) => {
                     embed.addField("All good.", "User has 0 recorded bans.");
                     return notifChannel.send(embed);
                 } else {
+                    //ill move this to history once i get a chance and set this to show something like: 
+                    //Bans: 3
+                    //Kicks: 1 
                     embed.setColor("RED");
                     if (userDoc.bans.length < 5) {
                         for (i = 0; i < userDoc.bans.length; i++) {
-                            embed.addField(`Date: ${userDoc.bans[i].date}`, `Reason: ${userDoc.bans[i].reason}`)
+                            embed.addField(`Date: ${userDoc.bans[i].date}`, `Reason: ${userDoc.bans[i].reason}`);
                         }
                     } else {
                         for (i = 0; i < 5; i++) {
-                            embed.addField(`Date: ${userDoc.bans[i].date}`, `Reason: ${userDoc.bans[i].reason}`)
+                            embed.addField(`Date: ${userDoc.bans[i].date}`, `Reason: ${userDoc.bans[i].reason}`);
                         }
-                        embed.addField("User has more than 5 bans...", `This user has ${userDoc.bans.length} bans known by this bot.`)
+                        embed.addField("User has more than 5 bans...", `This user has ${userDoc.bans.length} bans known by this bot.`);
                     }
                     return notifChannel.send(embed);
                 }
@@ -115,20 +132,39 @@ bot.on("guildMemberAdd", (member) => {
 });
 
 //user leave event
-bot.on("guildMemberRemove", (member) => {
-    //not going to use this until analytics is built in.
+bot.on("guildMemberRemove", async (member) => {
+
+    const fetchedAudit = await member.guild.fetchAuditLogs({
+        limit: 1,
+        type: 'MEMBER_KICK'
+    })
+    const kickLog = fetchedAudit.entries.first();
+
+    User.findOne({
+        userID: member.id
+    }, (err, userDoc) => {
+        if (err) console.log(err);
+        if (!userDoc) {
+            const newDoc = new User({
+                userID: member.id,
+                kicks: [{
+                    date: output,
+                    reason: kickLog.reason
+                }]
+            });
+            newDoc.save().catch(err => console.log(err));
+        } else {
+            userDoc.kicks = userDoc.kicks.concat([{
+                date: output,
+                reason: kickLog.reason
+            }])
+            userDoc.save().catch(err => console.log(err));
+        }
+    })
 });
 
 //user ban event
 bot.on("guildBanAdd", async (guild, user) => {
-    //Getting the date (yeah i copied and pasted this idc :) )
-    const monthNames = ["January", "February", "March", "April", "May", "June",
-        "July", "August", "September", "October", "November", "December"];
-    let dateObj = new Date();
-    let month = monthNames[dateObj.getMonth()];
-    let day = String(dateObj.getDate()).padStart(2, '0');
-    let year = dateObj.getFullYear();
-    let output = month + '\n' + day + ', ' + year;
 
     const fetchedAudit = await guild.fetchAuditLogs({
         limit: 1,
@@ -141,10 +177,8 @@ bot.on("guildBanAdd", async (guild, user) => {
         if (err) console.log(err);
         if (!doc) {
             const newUser = new User({
-                username: user.username,
                 userID: user.id,
                 bans: [{
-                    serverID: guild.id,
                     date: output,
                     reason: banLog.reason
                 }]
@@ -152,24 +186,14 @@ bot.on("guildBanAdd", async (guild, user) => {
             newUser.save().catch(err => console.log(err));
         } else {
             //update bans
-
-            let newBan = [{
+            doc.bans = doc.bans.concat([{
                 serverID: guild.id,
                 date: output,
                 reason: banLog.reason
-            }]
-            console.log(doc.bans)
-            doc.bans = doc.bans.concat(newBan)
-            console.log(doc.bans);
+            }]);
             doc.save().catch(err => console.log(err));
         }
     })
 });
-
-//user unban event
-bot.on("guildBanRemove", (user) => {
-
-});
-
 //client login
 bot.login(token)

@@ -2,7 +2,7 @@ module.exports = class help {
     constructor() {
         this.name = 'help',
             this.alias = ['h'],
-            this.usage = '?help'
+            this.usage = '!help'
     }
 
     async run(bot, message, args) {
@@ -13,9 +13,10 @@ module.exports = class help {
         let embed = new Discord.MessageEmbed()
             .setTitle(this.name)
             .addField("Config", "!config <adminchannel/notifchannel> <id>")
-            .addField("History (soon)", "!history <user id>")
+            .addField("History", "!history <user id>")
+            .addField("Alerts", "!alerts <on/off>")
             .setColor("BLURPLE")
-            .setFooter("Big Brother", bot.user.displayAvatarURL);
+            .setFooter("powered by Big Brother", bot.user.displayAvatarURL);
 
         message.channel.send(embed);
     }
