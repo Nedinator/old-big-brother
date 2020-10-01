@@ -9,6 +9,6 @@ module.exports = class history {
         const Discord = require('discord.js');
         const Server = require('../models/server.js');
         const User = require('../models/user.js');
-
+        //ima do this in the morning
     }
 }

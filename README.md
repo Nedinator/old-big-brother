@@ -2,7 +2,7 @@
 > be notified if someone sketchy joins your server.
 
 ## Status
-> Bans are 100% functional. Going to start implementing kicks.
+> Bans/kicks are 100% functional. Working on commands and polishing everything
 
 ## TODO
 * [x] Config system
@@ -13,27 +13,29 @@
   * [x] Monitor and log bans.
     * [x] On join, check will be done for any bans. 
     * [x] Sends notification embed to desired channel.
-    * [ ] Page embeds coming soon™
-  * [ ] Monitoring kicks
-    * [ ] Check audit log on member leave, if kicked log
-    * [ ] On join, check for kicks from all servers.
+  * [x] Monitoring kicks
+    * [x] Check audit log on member leave, if kicked log
+    * [x] On join, check for kicks from all servers.
 * [ ] History command
-* [ ] Alert Command
-  * [ ] To prevent unwanted spam in servers, alerts will be toggles.
+  * [ ] Page embeds coming soon™ (LOL maybe)
+* [x] Alert Command
+  * [x] To prevent unwanted spam in servers, alerts will be toggles.
 * [ ] Bot assets - profile picture, website, etc
-  
+
+## Get this bot
+> <a href="https://discord.com/api/oauth2/authorize?client_id=593429048106025000&permissions=2176&scope=bot">Click this</a> to invite this discord bot to your server. This requires permissions to read audit logs to log the reason of kicks/bans in your server. I may change this to optional later on.  
 
 ## Discord
-> <a href="https://discord.gg/nB5sKEz">Click here</a> to chat about this bot
+> <a href="https://discord.gg/nB5sKEz">Click here</a> to chat about this bot and other projects im working on.
 
 ## Release History
 
-* 1.0.0
+* 0.0.1
     * ADD: Readme, CommandHandler, MongoDB setup, and help and config started. Also attempting to log all bans, (this is going to be fun). 
-* 1.1.0
+* 0.0.2
     * UPDATE: Actually finished the config and help, updated readme, and added checks, notifs, and logging of ban data.
-* 1.2.0 
-    * ADD: Kick logging and history command, 
+* 1.0.0 
+    * ADD: Kick logging, alert command, and overall polishing. Updated release history.
 
 [https://github.com/nedinator/big-brother](https://github.com/nedinator/big-brother)
 

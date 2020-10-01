@@ -5,6 +5,12 @@ const {
     token
 } = require("./token.json");
 
+//set up env variables
+require('dotenv').config();
+const dbuser = process.env.DB_USER;
+const dbpass = process.env.DB_PASS;
+const dbhost = process.env.DB_HOST;
+
 //command handler
 const {
     CommandHandler
@@ -16,16 +22,13 @@ const CH = new CommandHandler({
 
 //mongo connection stuff
 const mongoose = require("mongoose");
-mongoose.connect('mongodb://localhost/bigbrother', {
+mongoose.connect(`mongodb+srv://${dbuser}:${dbpass}${dbhost}/big-brother`, {
     useNewUrlParser: true,
     useUnifiedTopology: true
 });
+//
 const Server = require("./models/server.js");
 const User = require("./models/user.js");
-
-//extra utils
-const adminTools = require("./utils/admin.js");
-const user = require("./models/user.js");
 
 //turn on da bot
 bot.on("ready", () => {
@@ -40,7 +43,6 @@ bot.on("ready", () => {
 
 //message sent event
 bot.on("message", (message) => {
-    if (message.author.id !== '178657593030475776') return;
     if (message.channel.type === 'dm') return;
     if (message.author.type === 'bot') return;
     let args = message.content.split(" ");
@@ -90,40 +92,37 @@ bot.on("guildMemberAdd", (member) => {
     }, (err, serverDoc) => {
         if (err) console.log(err);
         if (!serverDoc) {
+            const newDoc = new Server({
+                serverName: member.guild.name,
+                serverID: member.guild.id
+            })
+            newDoc.save().catch(err => console.log(err));
             return console.log("Server not found.");
+
         } else {
-            //start the embed
+            if(!serverDoc.alerts) return;
+
             let embed = new Discord.MessageEmbed()
                 .setTitle("Big Brother Alert: New User")
                 .setDescription(`${member.user.username} - ${member.id}`)
                 .setTimestamp(Date.now())
-                .setFooter("Note: This bot can only detect bans in the servers its in.", bot.user.displayAvatarURL)
+                .setFooter("Note: This bot can only detect bans/kicks in the servers its in.", bot.user.displayAvatarURL)
                 .setThumbnail(member.user.displayAvatarURL());
             User.findOne({
                 userID: member.id
             }, (err2, userDoc) => {
                 if (err2) console.log(err2);
-                //since we're in the server query block, we can get data from that too
+                if(!serverDoc.notifChannel) return;
                 let notifChannel = bot.channels.cache.get(serverDoc.notifChannel);
+                if(!notifChannel) return;
                 if (!userDoc) {
                     embed.setColor("GREEN")
-                    embed.addField("All good.", "User has 0 recorded bans.");
+                    embed.addField("All good.", "User has 0 recorded bans/kicks.");
                     return notifChannel.send(embed);
                 } else {
-                    //ill move this to history once i get a chance and set this to show something like: 
-                    //Bans: 3
-                    //Kicks: 1 
                     embed.setColor("RED");
-                    if (userDoc.bans.length < 5) {
-                        for (i = 0; i < userDoc.bans.length; i++) {
-                            embed.addField(`Date: ${userDoc.bans[i].date}`, `Reason: ${userDoc.bans[i].reason}`);
-                        }
-                    } else {
-                        for (i = 0; i < 5; i++) {
-                            embed.addField(`Date: ${userDoc.bans[i].date}`, `Reason: ${userDoc.bans[i].reason}`);
-                        }
-                        embed.addField("User has more than 5 bans...", `This user has ${userDoc.bans.length} bans known by this bot.`);
-                    }
+                    embed.addField("Bans", userDoc.bans.length - 1); //for some reason this was adding 1 extra
+                    embed.addField("Kicks", userDoc.kicks.length);
                     return notifChannel.send(embed);
                 }
             })
@@ -154,10 +153,11 @@ bot.on("guildMemberRemove", async (member) => {
             });
             newDoc.save().catch(err => console.log(err));
         } else {
-            userDoc.kicks = userDoc.kicks.concat([{
+            const kickDoc = [{
                 date: output,
                 reason: kickLog.reason
-            }])
+            }]
+            userDoc.kicks = userDoc.kicks.concat(kickDoc)
             userDoc.save().catch(err => console.log(err));
         }
     })
@@ -186,11 +186,12 @@ bot.on("guildBanAdd", async (guild, user) => {
             newUser.save().catch(err => console.log(err));
         } else {
             //update bans
-            doc.bans = doc.bans.concat([{
+            const newBan = [{
                 serverID: guild.id,
                 date: output,
                 reason: banLog.reason
-            }]);
+            }]
+            doc.bans = doc.bans.concat(newBan);
             doc.save().catch(err => console.log(err));
         }
     })
