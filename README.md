@@ -16,7 +16,7 @@
   * [x] Monitoring kicks
     * [x] Check audit log on member leave, if kicked log
     * [x] On join, check for kicks from all servers.
-* [ ] History command
+* [x] History command
   * [ ] Page embeds coming soon™ (LOL maybe)
 * [x] Alert Command
   * [x] To prevent unwanted spam in servers, alerts will be toggles.
@@ -27,17 +27,6 @@
 
 ## Discord
 > <a href="https://discord.gg/nB5sKEz">Click here</a> to chat about this bot and other projects im working on.
-
-## Release History
-
-* 0.0.1
-    * ADD: Readme, CommandHandler, MongoDB setup, and help and config started. Also attempting to log all bans, (this is going to be fun). 
-* 0.0.2
-    * UPDATE: Actually finished the config and help, updated readme, and added checks, notifs, and logging of ban data.
-* 1.0.0 
-    * ADD: Kick logging, alert command, and overall polishing. Updated release history.
-
-[https://github.com/nedinator/big-brother](https://github.com/nedinator/big-brother)
 
 ## Contributing
 

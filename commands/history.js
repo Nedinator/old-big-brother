@@ -39,7 +39,9 @@ module.exports = class history {
                     } else {
                         embed.setColor("RED")
                         if (args[1] == 'kick') {
-                            if (userDoc.kicks.length < 5) {
+                            if (userDoc.kicks.length === 0) {
+                                embed.addField("No kicks.", "This user has no recorded kicks, but has bans.")
+                            } else if (userDoc.kicks.length < 5) {
                                 for (let i = 0; i < userDoc.kicks.length; i++) {
                                     embed.addField(`Date: ${userDoc.kicks[i].date}`, `Reason: ${userDoc.kicks[i].reason}`);
                                 }
@@ -49,9 +51,11 @@ module.exports = class history {
                                 }
                             }
                         } else if (args[1] == 'ban') {
-                            if (userDoc.bans.length < 5) {
+                            if (userDoc.bans.length === 1) {
+                                embed.addField('No bans found.', 'This user has no recorded bans, but has kicks.')
+                            } else if (userDoc.bans.length < 5) {
                                 for (let i = 0; i < userDoc.kicks.length; i++) {
-                                    embed.addField(`Date: ${userDoc.bans[i].date}`, `Reason: ${userDoc.kicks[i].reason}`);
+                                    embed.addField(`Date: ${userDoc.bans[i].date}`, `Reason: ${userDoc.bans[i].reason}`);
                                 }
                             } else {
                                 for (let i = 0; i < 5; i++) {
