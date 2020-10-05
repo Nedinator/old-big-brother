@@ -140,7 +140,7 @@ bot.on("guildMemberRemove", async (member) => {
         limit: 1,
         type: 'MEMBER_KICK'
     })
-    const kickLog = fetchedAudit.entries.first();
+    const kickLog = fetchedAudit.entries.first() || 'No reason specified.'
 
     User.findOne({
         userID: member.id
@@ -173,7 +173,7 @@ bot.on("guildBanAdd", async (guild, user) => {
         limit: 1,
         type: 'MEMBER_BAN_ADD'
     });
-    const banLog = fetchedAudit.entries.first();
+    const banLog = fetchedAudit.entries.first() || 'No reason specified.'
     User.findOne({
         userID: user.id
     }, (err, doc) => {
