@@ -33,7 +33,7 @@ const User = require("./models/user.js");
 //turn on da bot
 bot.on("ready", () => {
     console.log(bot.user.username + " is online and ready.");
-    bot.user.setActivity(`${bot.guilds.cache.array.length + 1} servers.`, {
+    bot.user.setActivity(`${bot.guilds.size} servers.`, {
         type: "WATCHING"
     });
     bot.generateInvite(['ADMINISTRATOR'])
@@ -69,7 +69,7 @@ let output = month + ' ' + day + ', ' + year;
 
 //bot join server event
 bot.on("guildCreate", (guild) => {
-    bot.user.setActivity(`${bot.guilds.cache.array.length + 1} servers.`, {
+    bot.user.setActivity(`${bot.guilds.cache.length} servers.`, {
         type: "WATCHING"
     });
     Server.findOne({

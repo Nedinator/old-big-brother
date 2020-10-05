@@ -5,6 +5,8 @@
 > Bans/kicks are 100% functional. Working on commands and polishing everything
 
 ## TODO
+* [ ] Activity server count bug
+
 * [x] Config system
   * [x] Select admin channel
   * [x] Select notification channel

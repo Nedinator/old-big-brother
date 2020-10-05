@@ -55,11 +55,11 @@ module.exports = class history {
                                 embed.addField('No bans found.', 'This user has no recorded bans, but has kicks.')
                             } else if (userDoc.bans.length < 5) {
                                 for (let i = 0; i < userDoc.kicks.length; i++) {
-                                    embed.addField(`Date: ${userDoc.bans[i].date}`, `Reason: ${userDoc.bans[i].reason}`);
+                                    embed.addField(`Date: ${userDoc.bans[i + 1].date}`, `Reason: ${userDoc.bans[i + 1].reason}`);
                                 }
                             } else {
                                 for (let i = 0; i < 5; i++) {
-                                    embed.addField(`Date: ${userDoc.bans[i].date}`, `Reason: ${userDoc.bans[i].reason}`);
+                                    embed.addField(`Date: ${userDoc.bans[i + 1].date}`, `Reason: ${userDoc.bans[i + 1].reason}`);
                                 }
                             }
                         } else {
