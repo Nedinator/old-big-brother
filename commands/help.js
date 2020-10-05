@@ -11,12 +11,13 @@ module.exports = class help {
         const Server = require("../models/server.js");
         if (!admintool.checkAdminChannel) return;
         let embed = new Discord.MessageEmbed()
-            .setTitle(this.name)
+            .setTitle("Help")
+            .setThumbnail(bot.user.displayAvatarURL)
             .addField("Config", "!config <adminchannel/notifchannel> <id>")
-            .addField("History", "!history <user id>")
+            .addField("History", "!history <kick/ban> <user id>")
             .addField("Alerts", "!alerts <on/off>")
             .setColor("BLURPLE")
-            .setFooter("powered by Big Brother", bot.user.displayAvatarURL);
+            .setFooter("powered by Big Brother");
 
         message.channel.send(embed);
     }

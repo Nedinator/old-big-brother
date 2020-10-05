@@ -65,10 +65,13 @@ let dateObj = new Date();
 let month = monthNames[dateObj.getMonth()];
 let day = String(dateObj.getDate()).padStart(2, '0');
 let year = dateObj.getFullYear();
-let output = month + '\n' + day + ', ' + year;
+let output = month + ' ' + day + ', ' + year;
 
 //bot join server event
 bot.on("guildCreate", (guild) => {
+    bot.user.setActivity(`${bot.guilds.cache.array.length + 1} servers.`, {
+        type: "WATCHING"
+    });
     Server.findOne({
         serverID: guild.id
     }, (err, doc) => {
@@ -100,7 +103,7 @@ bot.on("guildMemberAdd", (member) => {
             return console.log("Server not found.");
 
         } else {
-            if(!serverDoc.alerts) return;
+            if (!serverDoc.alerts) return;
 
             let embed = new Discord.MessageEmbed()
                 .setTitle("Big Brother Alert: New User")
@@ -112,9 +115,9 @@ bot.on("guildMemberAdd", (member) => {
                 userID: member.id
             }, (err2, userDoc) => {
                 if (err2) console.log(err2);
-                if(!serverDoc.notifChannel) return;
+                if (!serverDoc.notifChannel) return;
                 let notifChannel = bot.channels.cache.get(serverDoc.notifChannel);
-                if(!notifChannel) return;
+                if (!notifChannel) return;
                 if (!userDoc) {
                     embed.setColor("GREEN")
                     embed.addField("All good.", "User has 0 recorded bans/kicks.");
