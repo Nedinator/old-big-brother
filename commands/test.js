@@ -9,6 +9,6 @@ module.exports = class test {
         const Discord = require('discord.js');
         const Server = require('../models/server.js');
         const User = require('../models/user.js');
-        
+
     }
 }

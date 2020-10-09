@@ -3,7 +3,7 @@ const djsCommands = require('djs-commands');
 module.exports = class history {
     constructor() {
         this.name = 'history',
-            this.alias = ['hist'],
+            this.alias = ['h'],
             this.usage = '!history <ban/kick> <id>'
     }
 
@@ -13,6 +13,7 @@ module.exports = class history {
         } = require('discord.js');
         const Server = require('../models/server.js');
         const User = require('../models/user.js');
+
         //need some arg checks soon. right now, hope they just do it right.
         let member = message.guild.member(message.guild.members.cache.get(args[2]));
         Server.findOne({
@@ -24,6 +25,7 @@ module.exports = class history {
             } else {
                 if (message.channel.id !== serverDoc.adminChannel) return;
                 if (!member) return message.reply("Sorry, the person has to be in your guild to see their history.")
+                if (!message.guild.me.hasPermission("VIEW_AUDIT_LOG")) return message.reply("to use this command, please give the bot permission to read audit logs.");
                 let embed = new MessageEmbed()
                     .setTitle(args[2])
                     .setThumbnail(member.user.displayAvatarURL())

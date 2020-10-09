@@ -2,30 +2,30 @@ module.exports = class config {
     constructor() {
         this.name = 'config',
             this.alias = ['c'],
-            this.usage = '!config <adminchannel/notifchannel> <channel id>'
+            this.usage = '!config <admin/alert> <channel id>'
     }
 
     async run(bot, message, args) {
-        const Discord = require("discord.js")
         const Server = require("../models/server.js");
         if (!message.member.hasPermission("ADMINISTRATOR")) return;
-
-        if (!args[1] || !args[2] || args[3]) return message.reply(this.usage)
-        //i wanna do more channel checking so this doesnt get broken, but rn its just me
+        if (!bot.user.hasPermission("VIEW_AUDIT_LOG")) return message.reply("to use this command, please give the bot permission to read audit logs.");
+        if (!args[1]) return message.reply(this.usage);
+        let channel = message.guild.channels.cache(args[2]);
+        if (!channel) return message.reply(this.usage);
 
         Server.findOne({
             serverID: message.guild.id
         }, (err, doc) => {
             if (err) console.log(err);
             if (!doc) {
-                return message.reply("Uh oh, that isn't supposed to happen. Kick bot and reinvite?");
+                return message.reply("Uh oh, that isn't supposed to happen. Let Ned know in support server.");
             } else {
-                if (args[1] === 'adminchannel') {
+                if (args[1] === 'admin') {
                     doc.adminChannel = args[2];
                     doc.save().catch(err => console.log(err));
                     return message.channel.send("Done!");
                 }
-                if (args[1] === 'notifchannel') {
+                if (args[1] === 'alert') {
                     doc.notifChannel = args[2];
                     doc.save().catch(err => console.log(err));
                     return message.channel.send("Done!");

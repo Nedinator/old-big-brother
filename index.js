@@ -33,7 +33,7 @@ const User = require("./models/user.js");
 //turn on da bot
 bot.on("ready", () => {
     console.log(bot.user.username + " is online and ready.");
-    bot.user.setActivity(`${bot.guilds.size} servers.`, {
+    bot.user.setActivity(`${bot.guilds.cache.size} servers.`, {
         type: "WATCHING"
     });
     bot.generateInvite(['ADMINISTRATOR'])
@@ -69,7 +69,7 @@ let output = month + ' ' + day + ', ' + year;
 
 //bot join server event
 bot.on("guildCreate", (guild) => {
-    bot.user.setActivity(`${bot.guilds.cache.length} servers.`, {
+    bot.user.setActivity(`${bot.guilds.cache.size} servers.`, {
         type: "WATCHING"
     });
     Server.findOne({
@@ -136,11 +136,17 @@ bot.on("guildMemberAdd", (member) => {
 //user leave event
 bot.on("guildMemberRemove", async (member) => {
 
-    const fetchedAudit = await member.guild.fetchAuditLogs({
-        limit: 1,
-        type: 'MEMBER_KICK'
-    })
-    const kickLog = fetchedAudit.entries.first() || 'No reason specified.'
+    let kickLog;
+
+    if (!member.guild.me.hasPermission("VIEW_AUDIT_LOG")) {
+        kickLog = 'Bot couldnt see due to permissions.'
+    } else {
+        const fetchedAudit = await member.guild.fetchAuditLogs({
+            limit: 1,
+            type: 'MEMBER_KICK'
+        })
+        kickLog = fetchedAudit.entries.first().reason;
+    }
 
     User.findOne({
         userID: member.id
@@ -151,7 +157,7 @@ bot.on("guildMemberRemove", async (member) => {
                 userID: member.id,
                 kicks: [{
                     date: output,
-                    reason: kickLog.reason
+                    reason: kickLog
                 }]
             });
             newDoc.save().catch(err => console.log(err));
@@ -168,22 +174,27 @@ bot.on("guildMemberRemove", async (member) => {
 
 //user ban event
 bot.on("guildBanAdd", async (guild, user) => {
-
-    const fetchedAudit = await guild.fetchAuditLogs({
-        limit: 1,
-        type: 'MEMBER_BAN_ADD'
-    });
-    const banLog = fetchedAudit.entries.first() || 'No reason specified.'
+    
     User.findOne({
         userID: user.id
-    }, (err, doc) => {
+    }, async (err, doc) => {
         if (err) console.log(err);
+        let banLog;
+    if (!member.guild.hasPermission("VIEW_AUDIT_LOG")) {
+        banLog = 'Bot couldnt see due to permissions.'
+    } else {
+        const fetchedAudit = await guild.fetchAuditLogs({
+            limit: 1,
+            type: 'MEMBER_BAN_ADD'
+        });
+        banLog = fetchedAudit.entries.first().reason;
+    }
         if (!doc) {
             const newUser = new User({
                 userID: user.id,
                 bans: [{
                     date: output,
-                    reason: banLog.reason
+                    reason: banLog
                 }]
             })
             newUser.save().catch(err => console.log(err));
@@ -192,7 +203,7 @@ bot.on("guildBanAdd", async (guild, user) => {
             const newBan = [{
                 serverID: guild.id,
                 date: output,
-                reason: banLog.reason
+                reason: banLog
             }]
             doc.bans = doc.bans.concat(newBan);
             doc.save().catch(err => console.log(err));
