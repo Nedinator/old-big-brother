@@ -8,9 +8,9 @@ module.exports = class config {
     async run(bot, message, args) {
         const Server = require("../models/server.js");
         if (!message.member.hasPermission("ADMINISTRATOR")) return;
-        if (!bot.user.hasPermission("VIEW_AUDIT_LOG")) return message.reply("to use this command, please give the bot permission to read audit logs.");
+        if (!message.guild.me.hasPermission("VIEW_AUDIT_LOG")) return message.reply("to use this command, please give the bot permission to read audit logs.");
         if (!args[1]) return message.reply(this.usage);
-        let channel = message.guild.channels.cache(args[2]);
+        let channel = message.guild.channels.cache.get(args[2]);
         if (!channel) return message.reply(this.usage);
 
         Server.findOne({
