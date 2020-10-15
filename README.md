@@ -20,7 +20,7 @@
   * [x] To prevent unwanted spam in servers, alerts will be toggles.
 
 ## Get this bot
-> <a href="https://discord.com/api/oauth2/authorize?client_id=593429048106025000&permissions=2176&scope=bot">Click this</a> to invite this discord bot to your server. This requires permissions to read audit logs to log the reason of kicks/bans in your server. I may change this to optional later on.  
+> <a href="https://discord.com/api/oauth2/authorize?client_id=593429048106025000&permissions=2176&scope=bot">Click this</a> to invite this discord bot to your server. This requires permissions to read audit logs to log the reason of kicks/bans in your server. This is technically optional, but without perms to read audit logs, I set it up so most functionality of the bot doesn't work. See below for details. 
 
 ## Commands
 

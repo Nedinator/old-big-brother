@@ -13,7 +13,7 @@ module.exports = class help {
         let embed = new Discord.MessageEmbed()
             .setTitle("Help")
             .setThumbnail(bot.user.displayAvatarURL)
-            .addField("Config", "!config <adminchannel/notifchannel> <id>")
+            .addField("Config", "!config <admin/alert> <channel id>")
             .addField("History", "!history <kick/ban> <user id>")
             .addField("Alerts", "!alerts <on/off>")
             .setColor("BLURPLE")
